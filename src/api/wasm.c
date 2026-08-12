@@ -1132,7 +1132,15 @@ static bool initWasm(tic_mem* tic, const char* code)
     }
 
     runtime->memory.maxPages = TIC_WASM_PAGE_COUNT;
-    ResizeMemory(runtime, TIC_WASM_PAGE_COUNT);
+    runtime->memory.pageSize = d_m3DefaultMemPageSize;
+    M3Result result = ResizeMemory(runtime, TIC_WASM_PAGE_COUNT);
+    if(result)
+    {
+        core->data->error(core->data->data, result);
+        m3_FreeRuntime(runtime);
+        m3_FreeEnvironment(env);
+        return false;
+    }
 
     u8* low_ram =  (u8*)core->memory.ram;
     u8* wasm_ram = m3_GetMemory(runtime, NULL, 0);
@@ -1161,7 +1169,7 @@ static bool initWasm(tic_mem* tic, const char* code)
     int fsize = tic->cart.binary.size;
 
     IM3Module module;
-    M3Result result = m3_ParseModule (runtime->environment, &module, wasmcode, fsize);
+    result = m3_ParseModule (runtime->environment, &module, wasmcode, fsize);
 
     if (result){
         core->data->error(core->data->data, result);

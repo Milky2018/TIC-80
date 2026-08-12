@@ -42,6 +42,7 @@ if(BUILD_WITH_WASM)
         ${WASM_DIR}/m3_function.c
         ${WASM_DIR}/m3_info.c
         ${WASM_DIR}/m3_module.c
+        ${WASM_DIR}/m3_validate.c
     )
 
     list(APPEND WASM_SRC ${CMAKE_SOURCE_DIR}/src/api/wasm.c)
